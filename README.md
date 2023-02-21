@@ -27,10 +27,31 @@ dependencies {
 
 ### In Your Code
 ```
-Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.IMMEDIATE);
-      //intent.putExtra("key", Type.FLEXIBLE);
+/* check if update is available or not */
+        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
+        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                startInAppUpdateActivity();
+            } else {
+                createTimer(COUNTER_TIME);
+            }
+            Log.e("update", " addOnSuccessListener ");
+        });
+
+        appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("update", " addOnFailureListener ");
+                createTimer(COUNTER_TIME);
+            }
+        });
+	
+private void startInAppUpdateActivity() {
+        Intent intent = new Intent(this, InAppUpdate.class);
+        intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
         startActivityForResult(intent, 123);
+    }
 
 get result like this
 @Override
