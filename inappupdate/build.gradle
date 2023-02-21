@@ -27,10 +27,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_14
-        targetCompatibility JavaVersion.VERSION_14
-    }
 }
 
 dependencies {
