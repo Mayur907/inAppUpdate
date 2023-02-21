@@ -10,7 +10,6 @@ from JitPack:
 
 Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
 ```
-gradle
 allprojects {
     repositories {
         ...
@@ -21,7 +20,6 @@ allprojects {
 ```
 Then, add the library to your module `build.gradle`
 ```
-gradle
 dependencies {
 	       implementation 'com.github.Mayur907:inAppUpdate:1.1.4'
 	}
@@ -29,7 +27,6 @@ dependencies {
 
 ### In Your Code
 ```
-java
 Intent intent = new Intent(this, InAppUpdate.class);
         intent.putExtra("key", Type.IMMEDIATE);
       //intent.putExtra("key", Type.FLEXIBLE);
@@ -65,7 +62,8 @@ get result like this
 ```
 <activity android:name="inappupdate.updateimmediate.updateflexible.InAppUpdate"
             android:theme="@style/Theme.AppCompat.Translucent" />
-	
+```	
+
 ### In Your theme.xml
 ```
 <!--add below code in themes.xml file-->
@@ -84,7 +82,7 @@ get result like this
         <!--on below line we are adding a window animationstyle-->
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
-
+```
 
 ## About Me
 Follow me at [Mayur907](https://github.com/Mayur907).
