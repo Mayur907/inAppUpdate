@@ -1,19 +1,13 @@
 plugins {
     id 'com.android.library'
-//    id 'android-maven'
-//    id 'com.github.dcendents.android-maven'
 }
-//apply plugin: 'com.github.dcendents.android-maven'
-//apply plugin: 'android-maven'
-//apply plugin: 'maven-publish'
-//group('com.github.Mayur907')
 
 android {
     namespace 'inappupdate.updateimmediate.updateflexible'
     compileSdk 31
 
     defaultConfig {
-        minSdk 24
+        minSdk 21
         targetSdk 31
         versionCode 1
         versionName "1.0"
