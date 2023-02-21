@@ -32,6 +32,6 @@ Intent intent = new Intent(this, InAppUpdate.class);
 //        intent.putExtra("key", Type.FLEXIBLE);
         startActivityForResult(intent, 123);
 
-
+```
 ## About Me
 Follow me at [Mayur907](https://github.com/Mayur907).
