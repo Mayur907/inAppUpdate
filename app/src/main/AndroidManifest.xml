@@ -27,6 +27,9 @@
         </activity>
 
         <activity android:name="stylishfont.tattoomaker.fonttattoodesign.MainActivity"/>
+
+        <activity android:name="inappupdate.updateimmediate.updateflexible.InAppUpdate"
+            android:theme="@style/Theme.AppCompat.Translucent" />
     </application>
 
 </manifest>
