@@ -1,11 +1,9 @@
 package stylishfont.tattoomaker.fonttattoodesign;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -58,8 +56,8 @@ public class SplashActivity extends AppCompatActivity {
                 if (data != null) {
                     Log.e("update", "splash from :: " + data.getIntExtra("from", 0));
                     /*check return from immediate or flexible
-                    * if return from immediate so app close */
-                    if(data.getIntExtra("from", 0) == 123456){
+                     * if return from immediate so app close */
+                    if (data.getIntExtra("from", 0) == 123456) {
                         finish();
                     } else {
                         createTimer(COUNTER_TIME);
