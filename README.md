@@ -60,5 +60,31 @@ get result like this
         }
     }
 ```
+
+### In Your Manifest.xml
+```
+<activity android:name="inappupdate.updateimmediate.updateflexible.InAppUpdate"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+	
+### In Your theme.xml
+```
+<!--add below code in themes.xml file-->
+    <!--below is the style for transparent activity and here we are using no action bar.-->
+    <style name="Theme.AppCompat.Translucent" parent="Theme.AppCompat.NoActionBar">
+        <!--on below line we are setting background as transparent color-->
+        <item name="android:background">@android:color/transparent</item>
+        <!--on below line we are displaying the windowNotitle as true as we are not displaying our status bar-->
+        <item name="android:windowNoTitle">true</item>
+        <!--on below line we are setting our window background as transparent color-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!--on below line we are setting color background cache hint as null-->
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <!--on below line we are adding a window translucent as true-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--on below line we are adding a window animationstyle-->
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+    </style>
+
+
 ## About Me
 Follow me at [Mayur907](https://github.com/Mayur907).
