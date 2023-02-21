@@ -21,7 +21,7 @@ allprojects {
 Then, add the library to your module `build.gradle`
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.4'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.5'
 	}
 ```
 
