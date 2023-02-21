@@ -9,7 +9,8 @@
 from JitPack:
 
 Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
-```gradle
+```
+gradle
 allprojects {
     repositories {
         ...
@@ -19,14 +20,16 @@ allprojects {
 
 ```
 Then, add the library to your module `build.gradle`
-```gradle
+```
+gradle
 dependencies {
 	        implementation 'com.github.Mayur907:inAppUpdate:1.0.0'
 	}
 ```
 
 ### In Your Code
-```java
+```
+java
 Intent intent = new Intent(this, InAppUpdate.class);
         intent.putExtra("key", Type.IMMEDIATE);
 //        intent.putExtra("key", Type.FLEXIBLE);
