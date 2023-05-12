@@ -1,7 +1,7 @@
 # InAppUpdateLibrary
 [![](https://jitpack.io/v/Mayur907/inAppUpdate.svg)](https://jitpack.io/#Mayur907/inAppUpdate)
 
->The simplest InAppUpdate library, create your own design in a few steps!
+>The simplest InAppUpdate library, set IMMEDIATE or FLEXIBLE in few steps!
  
 
 ## How To Use
