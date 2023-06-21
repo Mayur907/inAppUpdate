@@ -27,25 +27,8 @@ dependencies {
 
 ### In Your Code
 ```
-/* check if update is available or not */
-        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
-        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                startInAppUpdateActivity();
-            } else {
-                createTimer(COUNTER_TIME);
-            }
-            Log.e("update", " addOnSuccessListener ");
-        });
-
-        appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                Log.e("update", " addOnFailureListener ");
-                createTimer(COUNTER_TIME);
-            }
-        });
+/* start InAppUpadateActivity to check if an update is available or not in your splash screen on create() Method*/
+        startInAppUpdateActivity();
 	
 private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
@@ -53,7 +36,7 @@ private void startInAppUpdateActivity() {
         startActivityForResult(intent, 123);
     }
 
-get result like this
+get a result like this
 @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);       
@@ -65,7 +48,7 @@ get result like this
                     //get data from other activity if pass
 		    
                     /*check return from immediate or flexible
-                    * if return from immediate so app close */
+                    * if the return from immediate so app close */
                     if(data.getIntExtra("from", 0) == 123456){
                         finish();
                     } else {
