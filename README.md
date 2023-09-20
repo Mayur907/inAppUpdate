@@ -21,7 +21,7 @@ allprojects {
 Then, add the library to your module `build.gradle`
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.5'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.6'
 	}
 ```
 
@@ -51,6 +51,9 @@ get a result like this
                     * if the return from immediate so app close */
                     if(data.getIntExtra("from", 0) == 123456){
                         finish();
+                    }  else if(data.getBooleanExtra("update", false)) {
+			// show update dialog if avilable 
+                        //start your activity
                     } else {
                         //start your activity
                     }
