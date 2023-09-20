@@ -45,4 +45,6 @@
         <!--on below line we are adding a window animationstyle-->
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
+
+
 </resources>

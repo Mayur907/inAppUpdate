@@ -26,30 +26,15 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /* check if update is available or not */
-        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
-        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
-        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                startInAppUpdateActivity();
-            } else {
-                createTimer(COUNTER_TIME);
-            }
-            Log.e("update", " addOnSuccessListener ");
-        });
-
-        appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(Exception e) {
-                Log.e("update", " addOnFailureListener ");
-                createTimer(COUNTER_TIME);
-            }
-        });
+        startInAppUpdateActivity();
     }
 
     private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
         intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+        /* set custom dialog with only color modification
+        * don't change any other in "custom_dialog_layout" */
+//        intent.putExtra("layout", R.layout.custom_dialog_layout);
         startActivityForResult(intent, 123);
     }
 
@@ -84,6 +69,8 @@ public class SplashActivity extends AppCompatActivity {
                      * if return from immediate so app close */
                     if (data.getIntExtra("from", 0) == 123456) {
                         finish();
+                    } else if(data.getBooleanExtra("update", false)) {
+                        createTimer(COUNTER_TIME);
                     } else {
                         createTimer(COUNTER_TIME);
                     }

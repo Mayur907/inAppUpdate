@@ -2,11 +2,17 @@ package inappupdate.updateimmediate.updateflexible;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 //import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -28,6 +34,7 @@ public class InAppUpdate extends AppCompatActivity {
     private AppUpdateManager appUpdateManager;
     private InstallStateUpdatedListener installStateUpdatedListener;
     private Type type;
+    private int layout;
 
 
     @Override
@@ -37,6 +44,11 @@ public class InAppUpdate extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if ((extras != null) && (extras.containsKey("key")))
             type = (Type) extras.getSerializable("key");
+
+//        if ((extras != null) && (extras.containsKey("layout")))
+//            layout = extras.getInt("layout");
+//        else
+//            layout = R.layout.custom_dialog_layout;
 
         appUpdateManager = AppUpdateManagerFactory.create(this);
         checkType(type);
@@ -104,6 +116,38 @@ public class InAppUpdate extends AppCompatActivity {
     }
 
     private void popupSnackBarForCompleteUpdate() {
+        /*custom dialog*/
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.CommonDialogStyle);
+//        View view = LayoutInflater.from(this).inflate(layout, null);
+//        builder.setView(view);
+//
+//        Dialog dialog = builder.create();
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        dialog.setCanceledOnTouchOutside(false);
+//        dialog.setCancelable(false);
+//        dialog.show();
+//
+//        TextView negText = dialog.findViewById(R.id.txt_neg);
+//        TextView posText = dialog.findViewById(R.id.txt_pos);
+//
+//        negText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                finish();
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        posText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (appUpdateManager != null) {
+//                    appUpdateManager.completeUpdate();
+//                }
+//            }
+//        });
+
+        /*android default dialog*/
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Alert!");
         builder.setMessage("New app is ready, Do you want to install?");
@@ -126,7 +170,7 @@ public class InAppUpdate extends AppCompatActivity {
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
+        /*show snack bar*/
 //        Snackbar.make(findViewById(android.R.id.content).getRootView(), "New app is ready!", Snackbar.LENGTH_INDEFINITE)
 //                .setAction("Install", view -> {
 //                    if (appUpdateManager != null) {
@@ -179,6 +223,7 @@ public class InAppUpdate extends AppCompatActivity {
             } else {
 //                Log.e("update", " else fail ");
                 Intent intent = new Intent();
+                intent.putExtra("update", true);
                 setResult(Activity.RESULT_CANCELED, intent);
                 finish();
             }
