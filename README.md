@@ -1,7 +1,7 @@
 # InAppUpdateLibrary
 [![](https://jitpack.io/v/Mayur907/inAppUpdate.svg)](https://jitpack.io/#Mayur907/inAppUpdate)
 
->The simplest InAppUpdate library, set IMMEDIATE or FLEXIBLE in few steps!
+>The simplest InAppUpdate library, set IMMEDIATE or FLEXIBLE in a few steps!
  
 
 ## How To Use
@@ -52,7 +52,7 @@ get a result like this
                     if(data.getIntExtra("from", 0) == 123456){
                         finish();
                     }  else if(data.getBooleanExtra("update", false)) {
-			// show update dialog if avilable 
+			//Call this if an update is available 
                         //start your activity
                     } else {
                         //start your activity
