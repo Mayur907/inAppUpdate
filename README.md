@@ -1,7 +1,7 @@
-# RateUsLibrary
+# InAppUpdateLibrary
 [![](https://jitpack.io/v/Mayur907/inAppUpdate.svg)](https://jitpack.io/#Mayur907/inAppUpdate)
 
->The simplest InAppUpdate library, create your own design in a few steps!
+>The simplest InAppUpdate library, set IMMEDIATE or FLEXIBLE in few steps!
  
 
 ## How To Use
@@ -21,18 +21,22 @@ allprojects {
 Then, add the library to your module `build.gradle`
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.4'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.5'
 	}
 ```
 
 ### In Your Code
 ```
-Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.IMMEDIATE);
-      //intent.putExtra("key", Type.FLEXIBLE);
+/* start InAppUpadateActivity to check if an update is available or not in your splash screen on create() Method*/
+        startInAppUpdateActivity();
+	
+private void startInAppUpdateActivity() {
+        Intent intent = new Intent(this, InAppUpdate.class);
+        intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
         startActivityForResult(intent, 123);
+    }
 
-get result like this
+get a result like this
 @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);       
@@ -44,7 +48,7 @@ get result like this
                     //get data from other activity if pass
 		    
                     /*check return from immediate or flexible
-                    * if return from immediate so app close */
+                    * if the return from immediate so app close */
                     if(data.getIntExtra("from", 0) == 123456){
                         finish();
                     } else {
