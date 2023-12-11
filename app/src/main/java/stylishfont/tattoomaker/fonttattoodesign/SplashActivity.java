@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,12 +26,12 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-        startActivityForResult(intent, 123);
+        intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+        inAppActivity.launch(intent);
     }
 
-    private void createTimer(long seconds) {
-        CountDownTimer countDownTimer = new CountDownTimer(seconds * 1000, 1000) {
+    private void createTimer() {
+        CountDownTimer countDownTimer = new CountDownTimer(COUNTER_TIME * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
             }
@@ -45,25 +49,20 @@ public class SplashActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 123) {
-            if (resultCode == RESULT_OK) {
-                createTimer(COUNTER_TIME);
-            } else /*resultCode == RESULT_CANCELED*/ {
-                if (data != null) {
-                    /* check return from immediate or flexible
-                     * if return from immediate so app close */
-                    if (data.getIntExtra("from", 0) == 123456) {
-                        finish();
-                    } else {
-                        createTimer(COUNTER_TIME);
-                    }
-                } else {
-                    createTimer(COUNTER_TIME);
-                }
+
+    ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
+    new ActivityResultContracts.StartActivityForResult(),
+    new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            // handle callback
+            Intent data = result.getData();
+            if (data != null && data.getBooleanExtra("isImmediate", false)) {
+                /* if isImmediate is true so app close */
+                finish();
+            } else {
+                createTimer();
             }
         }
-    }
+    });
 }

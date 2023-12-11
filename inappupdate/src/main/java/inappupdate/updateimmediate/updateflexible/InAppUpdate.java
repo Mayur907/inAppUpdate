@@ -4,10 +4,15 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.util.Log;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.IntentSenderRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,18 +21,14 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.install.InstallStateUpdatedListener;
+import com.google.android.play.core.appupdate.AppUpdateOptions;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 
 public class InAppUpdate extends AppCompatActivity {
-    private static final int RC_APP_UPDATE_IMMEDIATE = 123456;
-    private static final int RC_APP_UPDATE_FLEXIBLE = 654321;
     private AppUpdateManager appUpdateManager;
-    private InstallStateUpdatedListener installStateUpdatedListener;
     private Type type;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,19 +51,6 @@ public class InAppUpdate extends AppCompatActivity {
 
     /*flexible update*/
     public void flexibleUpdate() {
-        installStateUpdatedListener = state -> {
-            if (state.installStatus() == InstallStatus.DOWNLOADED) {
-                popupSnackBarForCompleteUpdate();
-            } else if (state.installStatus() == InstallStatus.INSTALLED) {
-                removeInstallStateUpdateListener();
-            } else {
-                Toast.makeText(getApplicationContext(), "InstallStateUpdatedListener: state: " + state.installStatus(),
-                        Toast.LENGTH_LONG).show();
-                onBackPressed();
-            }
-        };
-        appUpdateManager.registerListener(installStateUpdatedListener);
-
         Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
         appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
@@ -79,7 +67,8 @@ public class InAppUpdate extends AppCompatActivity {
 
         appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(Exception e) {
+            public void onFailure(@NonNull Exception e) {
+                Log.e("inApp", "FLEXIBLE error Exception :: " + e.getMessage());
                 Intent intent = new Intent();
                 setResult(Activity.RESULT_CANCELED, intent);
                 finish();
@@ -88,12 +77,30 @@ public class InAppUpdate extends AppCompatActivity {
     }
 
     private void startUpdateFlowFlexible(AppUpdateInfo appUpdateInfo) {
-        try {
-            appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.FLEXIBLE, this, RC_APP_UPDATE_FLEXIBLE);
-        } catch (IntentSender.SendIntentException e) {
-            e.printStackTrace();
-        }
+        appUpdateManager.startUpdateFlowForResult(
+                appUpdateInfo,
+                flexibleActivityResult,
+                AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build());
     }
+
+
+    ActivityResultLauncher<IntentSenderRequest> flexibleActivityResult = registerForActivityResult(
+    new ActivityResultContracts.StartIntentSenderForResult(),
+    new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            // handle callback
+            int resultCode = result.getResultCode();
+            if (resultCode != RESULT_OK) {
+                Log.e("inApp", "Update canceled by user! Result Code: " + resultCode);
+            } else {
+                Log.e("inApp", "Update success! Result Code: " + resultCode);
+            }
+            Intent intent = new Intent();
+            setResult(Activity.RESULT_OK, intent);
+            finish();
+        }
+    });
 
     private void popupSnackBarForCompleteUpdate() {
         /*android default dialog*/
@@ -121,38 +128,12 @@ public class InAppUpdate extends AppCompatActivity {
         dialog.show();
     }
 
-    private void removeInstallStateUpdateListener() {
-        if (appUpdateManager != null) {
-            appUpdateManager.unregisterListener(installStateUpdatedListener);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (type == Type.FLEXIBLE) {
-            removeInstallStateUpdateListener();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        Intent intent = new Intent();
-        if (type != Type.FLEXIBLE) {
-            intent.putExtra("from", RC_APP_UPDATE_IMMEDIATE);
-        }
-        setResult(Activity.RESULT_CANCELED, intent);
-        finish();
-    }
-
     /*immediate update*/
     public void immediateUpdate() {
         Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
         appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                     && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-                startUpdateFlowImmediate(appUpdateInfo);
-            } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 startUpdateFlowImmediate(appUpdateInfo);
             } else {
                 Intent intent = new Intent();
@@ -163,7 +144,8 @@ public class InAppUpdate extends AppCompatActivity {
 
         appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
             @Override
-            public void onFailure(Exception e) {
+            public void onFailure(@NonNull Exception e) {
+                Log.e("inApp", "IMMEDIATE error Exception :: " + e.getMessage());
                 Intent intent = new Intent();
                 setResult(Activity.RESULT_CANCELED, intent);
                 finish();
@@ -172,30 +154,29 @@ public class InAppUpdate extends AppCompatActivity {
     }
 
     private void startUpdateFlowImmediate(AppUpdateInfo appUpdateInfo) {
-        try {
-            appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, this, RC_APP_UPDATE_IMMEDIATE);
-        } catch (IntentSender.SendIntentException e) {
-            e.printStackTrace();
-        }
+        appUpdateManager.startUpdateFlowForResult(
+                appUpdateInfo,
+                immediateActivityResult,
+                AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build());
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_CANCELED) {
-            Toast.makeText(getApplicationContext(), "Update canceled by user! Result Code: " + resultCode, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent();
-            intent.putExtra("from", requestCode);
-            setResult(Activity.RESULT_CANCELED, intent);
-            finish();
+    ActivityResultLauncher<IntentSenderRequest> immediateActivityResult = registerForActivityResult(
+            new ActivityResultContracts.StartIntentSenderForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    // handle callback
+                    int resultCode = result.getResultCode();
+                    Intent intent = new Intent();
+                    if (resultCode != RESULT_OK) {
+                        Log.e("inApp", "Update canceled by user! Result Code: " + resultCode);
+                        intent.putExtra("isImmediate", type==Type.IMMEDIATE);
+                    } else {
+                        Log.e("inApp", "Update success! Result Code: " + resultCode);
+                    }
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                }
+            });
 
-        } else if (resultCode == RESULT_OK) {
-            Toast.makeText(getApplicationContext(), "Update success! Result Code: " + resultCode, Toast.LENGTH_LONG).show();
-            Intent intent = new Intent();
-            setResult(Activity.RESULT_OK, intent);
-            finish();
-        } else {
-            Toast.makeText(getApplicationContext(), "Update Failed! Result Code: " + resultCode, Toast.LENGTH_LONG).show();
-        }
-    }
 }

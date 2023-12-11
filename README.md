@@ -21,7 +21,7 @@ allprojects {
 Then, add the library to your module `build.gradle`
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.6'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.7'
 	}
 ```
 
@@ -37,29 +37,21 @@ private void startInAppUpdateActivity() {
     }
 
 get a result like this
-@Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);       
-        if (requestCode == 123) {
-            if (resultCode == RESULT_OK) {
-                //start your activity
-            } else /*resultCode == RESULT_CANCELED*/ {
-                if (data != null) {
-                    //get data from other activity if pass
-		    
-                    /*check return from immediate or flexible
-                    * if the return from immediate so app close */
-                    if(data.getIntExtra("from", 0) == 123456){
-                        finish();
-                    } else {
-                        //start your activity
-                    }
-                } else {
-                   //start your activity
-                }
+ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
+    new ActivityResultContracts.StartActivityForResult(),
+    new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            // handle callback
+            Intent data = result.getData();
+            if (data != null && data.getBooleanExtra("isImmediate", false)) {
+                /* if isImmediate is true so app close */
+                finish();
+            } else {
+                createTimer();
             }
         }
-    }
+    });
 ```
 
 ### In Your Manifest.xml
