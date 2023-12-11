@@ -8,17 +8,19 @@
 ### Install
 from JitPack:
 
-Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
+Add it in your root build.gradle at the end of repositories
 ```
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
-}
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
 
 ```
 Then, add the library to your module `build.gradle`
+Add the dependency
 ```
 dependencies {
 	       implementation 'com.github.Mayur907:inAppUpdate:1.1.7'
