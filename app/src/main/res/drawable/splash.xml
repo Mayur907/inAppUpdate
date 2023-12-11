@@ -4,7 +4,7 @@
         <color android:color="@color/purple_500"/>
     </item>
     <item android:gravity="center">
-        <bitmap android:src="@drawable/ic_launcher_round"
+        <bitmap android:src="@drawable/splash_icon"
             android:gravity="center"/>
     </item>
 </layer-list>

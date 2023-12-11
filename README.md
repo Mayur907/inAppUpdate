@@ -51,9 +51,6 @@ get a result like this
                     * if the return from immediate so app close */
                     if(data.getIntExtra("from", 0) == 123456){
                         finish();
-                    }  else if(data.getBooleanExtra("update", false)) {
-			//Call this if an update is available 
-                        //start your activity
                     } else {
                         //start your activity
                     }

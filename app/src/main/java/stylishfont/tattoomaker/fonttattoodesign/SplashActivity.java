@@ -3,17 +3,9 @@ package stylishfont.tattoomaker.fonttattoodesign;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.play.core.appupdate.AppUpdateInfo;
-import com.google.android.play.core.appupdate.AppUpdateManager;
-import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.install.model.UpdateAvailability;
-import com.google.android.play.core.tasks.OnFailureListener;
-import com.google.android.play.core.tasks.Task;
 
 import inappupdate.updateimmediate.updateflexible.InAppUpdate;
 import inappupdate.updateimmediate.updateflexible.Type;
@@ -25,16 +17,12 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         startInAppUpdateActivity();
     }
 
     private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-        /* set custom dialog with only color modification
-        * don't change any other in "custom_dialog_layout" */
-//        intent.putExtra("layout", R.layout.custom_dialog_layout);
+        intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
         startActivityForResult(intent, 123);
     }
 
@@ -69,8 +57,6 @@ public class SplashActivity extends AppCompatActivity {
                      * if return from immediate so app close */
                     if (data.getIntExtra("from", 0) == 123456) {
                         finish();
-                    } else if(data.getBooleanExtra("update", false)) {
-                        createTimer(COUNTER_TIME);
                     } else {
                         createTimer(COUNTER_TIME);
                     }

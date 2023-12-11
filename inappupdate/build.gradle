@@ -4,11 +4,11 @@ plugins {
 
 android {
     namespace 'inappupdate.updateimmediate.updateflexible'
-    compileSdk 31
+    compileSdk 34
 
     defaultConfig {
         minSdk 21
-        targetSdk 31
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -33,5 +33,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     /*In App Update*/
-    api 'com.google.android.play:core:1.10.3'
+//    api 'com.google.android.play:core:1.10.3'
+    api 'com.google.android.play:app-update:2.1.0'
 }
