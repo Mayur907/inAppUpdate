@@ -35,7 +35,7 @@ dependencies {
 private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
         intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-        startActivityForResult(intent, 123);
+	inAppActivity.launch(intent)
     }
 
 get a result like this
