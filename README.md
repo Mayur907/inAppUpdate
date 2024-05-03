@@ -8,20 +8,22 @@
 ### Install
 from JitPack:
 
-Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
+Add it in your root build.gradle at the end of repositories
 ```
-allprojects {
-    repositories {
-        ...
-        maven { url 'https://jitpack.io' }
-    }
-}
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url 'https://jitpack.io' }
+		}
+	}
 
 ```
 Then, add the library to your module `build.gradle`
+Add the dependency
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.7'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.8'
 	}
 ```
 
@@ -33,7 +35,7 @@ dependencies {
 private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
         intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-        startActivityForResult(intent, 123);
+	inAppActivity.launch(intent)
     }
 
 get a result like this
@@ -76,7 +78,9 @@ ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
         <!--on below line we are adding a window translucent as true-->
         <item name="android:windowIsTranslucent">true</item>
         <!--on below line we are adding a window animationstyle-->
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 ```
 
