@@ -26,7 +26,7 @@ public class SplashActivity extends AppCompatActivity {
 
     private void startInAppUpdateActivity() {
         Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+        intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
         inAppActivity.launch(intent);
     }
 

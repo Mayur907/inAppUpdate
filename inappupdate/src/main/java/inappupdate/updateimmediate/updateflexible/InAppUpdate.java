@@ -119,6 +119,8 @@ public class InAppUpdate extends AppCompatActivity {
         builder.setNegativeButton("Later", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_CANCELED, intent);
                 finish();
                 dialogInterface.dismiss();
             }
@@ -170,7 +172,7 @@ public class InAppUpdate extends AppCompatActivity {
                     Intent intent = new Intent();
                     if (resultCode != RESULT_OK) {
                         Log.e("inApp", "Update canceled by user! Result Code: " + resultCode);
-                        intent.putExtra("isImmediate", type==Type.IMMEDIATE);
+                        intent.putExtra("isImmediate", true);
                     } else {
                         Log.e("inApp", "Update success! Result Code: " + resultCode);
                     }
