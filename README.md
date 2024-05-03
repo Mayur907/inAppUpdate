@@ -78,7 +78,9 @@ ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
         <!--on below line we are adding a window translucent as true-->
         <item name="android:windowIsTranslucent">true</item>
         <!--on below line we are adding a window animationstyle-->
-        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 ```
 
