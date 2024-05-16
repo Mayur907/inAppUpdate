@@ -1,5 +1,6 @@
 package stylishfont.tattoomaker.fonttattoodesign;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import inappupdate.updateimmediate.updateflexible.InAppUpdate;
 import inappupdate.updateimmediate.updateflexible.Type;
 
+@SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
 
     private static final long COUNTER_TIME = 4;
