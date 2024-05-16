@@ -41,19 +41,21 @@ private void startInAppUpdateActivity() {
 get a result like this
 ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
     new ActivityResultContracts.StartActivityForResult(),
-    new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            // handle callback
-            Intent data = result.getData();
-            if (data != null && data.getBooleanExtra("isImmediate", false)) {
-                /* if isImmediate is true so app close */
-                finish();
-            } else {
-                createTimer();
-            }
-        }
-    });
+            result -> {
+                // handle callback
+                if (result.getResultCode() == RESULT_OK) {
+                    createTimer();
+                } else {
+                    Intent data = result.getData();
+                    /* check the below condition for if it's an immediate update and the user cancels the update so can't move the user to the next screen
+                    * and finish activity */
+                    if (data != null && data.getIntExtra("from", -1) == Type.IMMEDIATE.getCode()) {
+                        finish();
+                    } else {
+                        createTimer();
+                    }
+                }
+            });
 ```
 
 ### In Your Manifest.xml
