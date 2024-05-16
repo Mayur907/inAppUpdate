@@ -2,21 +2,16 @@ package inappupdate.updateimmediate.updateflexible;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -38,10 +33,7 @@ public class InAppUpdate extends AppCompatActivity {
             type = (Type) extras.getSerializable("key");
 
         appUpdateManager = AppUpdateManagerFactory.create(this);
-        checkType(type);
-    }
 
-    private void checkType(Type type) {
         if (type == Type.IMMEDIATE) {
             immediateUpdate();
         } else {
@@ -55,24 +47,26 @@ public class InAppUpdate extends AppCompatActivity {
         appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                     && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                Log.e("inApp", "FLEXIBLE UPDATE_AVAILABLE ");
                 startUpdateFlowFlexible(appUpdateInfo);
             } else if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                Log.e("inApp", "FLEXIBLE DOWNLOADED ");
                 popupSnackBarForCompleteUpdate();
             } else {
+                Log.e("inApp", "FLEXIBLE else ");
                 Intent intent = new Intent();
+                intent.putExtra("from", Type.FLEXIBLE.getCode());
                 setResult(Activity.RESULT_CANCELED, intent);
                 finish();
             }
         });
 
-        appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("inApp", "FLEXIBLE error Exception :: " + e.getMessage());
-                Intent intent = new Intent();
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
-            }
+        appUpdateInfoTask.addOnFailureListener(e -> {
+            Log.e("inApp", "FLEXIBLE error Exception :: " + e.getMessage());
+            Intent intent = new Intent();
+            intent.putExtra("from", Type.FLEXIBLE.getCode());
+            setResult(Activity.RESULT_CANCELED, intent);
+            finish();
         });
     }
 
@@ -85,45 +79,39 @@ public class InAppUpdate extends AppCompatActivity {
 
 
     ActivityResultLauncher<IntentSenderRequest> flexibleActivityResult = registerForActivityResult(
-    new ActivityResultContracts.StartIntentSenderForResult(),
-    new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            // handle callback
-            int resultCode = result.getResultCode();
-            if (resultCode != RESULT_OK) {
-                Log.e("inApp", "Update canceled by user! Result Code: " + resultCode);
-            } else {
-                Log.e("inApp", "Update success! Result Code: " + resultCode);
-            }
-            Intent intent = new Intent();
-            setResult(Activity.RESULT_OK, intent);
-            finish();
-        }
-    });
+            new ActivityResultContracts.StartIntentSenderForResult(),
+            result -> {
+                // handle callback
+                int resultCode = result.getResultCode();
+                if (resultCode == RESULT_OK) {
+                    Log.e("inApp", "FLEXIBLE Update success! Result Code: " + resultCode);
+                } else {
+                    Log.e("inApp", "FLEXIBLE Update canceled by user! Result Code: " + resultCode);
+                }
+                Intent intent = new Intent();
+                setResult(resultCode, intent);
+                intent.putExtra("from", Type.FLEXIBLE.getCode());
+                finish();
+            });
 
     private void popupSnackBarForCompleteUpdate() {
-        /*android default dialog*/
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Alert!");
         builder.setMessage("New app is ready, Do you want to install?");
         builder.setCancelable(false);
-        builder.setPositiveButton("Install", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (appUpdateManager != null) {
-                    appUpdateManager.completeUpdate();
-                }
+        builder.setPositiveButton("Install", (dialogInterface, i) -> {
+            if (appUpdateManager != null) {
+                Log.e("inApp", "FLEXIBLE positive button pressed ");
+                appUpdateManager.completeUpdate();
             }
         });
-        builder.setNegativeButton("Later", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Intent intent = new Intent();
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
-                dialogInterface.dismiss();
-            }
+        builder.setNegativeButton("Later", (dialogInterface, i) -> {
+            Log.e("inApp", "FLEXIBLE negative button pressed ");
+            Intent intent = new Intent();
+            intent.putExtra("from", Type.FLEXIBLE.getCode());
+            setResult(Activity.RESULT_CANCELED, intent);
+            finish();
+            dialogInterface.dismiss();
         });
 
         AlertDialog dialog = builder.create();
@@ -136,22 +124,23 @@ public class InAppUpdate extends AppCompatActivity {
         appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                     && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                Log.e("inApp", "IMMEDIATE UPDATE_AVAILABLE ");
                 startUpdateFlowImmediate(appUpdateInfo);
             } else {
+                Log.e("inApp", "IMMEDIATE else ");
                 Intent intent = new Intent();
+                intent.putExtra("from", Type.IMMEDIATE.getCode());
                 setResult(Activity.RESULT_CANCELED, intent);
                 finish();
             }
         });
 
-        appUpdateInfoTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("inApp", "IMMEDIATE error Exception :: " + e.getMessage());
-                Intent intent = new Intent();
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
-            }
+        appUpdateInfoTask.addOnFailureListener(e -> {
+            Log.e("inApp", "IMMEDIATE error Exception :: " + e.getMessage());
+            Intent intent = new Intent();
+            intent.putExtra("from", Type.IMMEDIATE.getCode());
+            setResult(Activity.RESULT_CANCELED, intent);
+            finish();
         });
     }
 
@@ -164,21 +153,18 @@ public class InAppUpdate extends AppCompatActivity {
 
     ActivityResultLauncher<IntentSenderRequest> immediateActivityResult = registerForActivityResult(
             new ActivityResultContracts.StartIntentSenderForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    // handle callback
-                    int resultCode = result.getResultCode();
-                    Intent intent = new Intent();
-                    if (resultCode != RESULT_OK) {
-                        Log.e("inApp", "Update canceled by user! Result Code: " + resultCode);
-                        intent.putExtra("isImmediate", true);
-                    } else {
-                        Log.e("inApp", "Update success! Result Code: " + resultCode);
-                    }
-                    setResult(Activity.RESULT_OK, intent);
-                    finish();
+            result -> {
+                // handle callback
+                int resultCode = result.getResultCode();
+                if (resultCode == RESULT_OK) {
+                    Log.e("inApp", "IMMEDIATE Update success! Result Code: " + resultCode);
+                } else {
+                    Log.e("inApp", "IMMEDIATE Update canceled by user! Result Code: " + resultCode);
                 }
+                Intent intent = new Intent();
+                setResult(resultCode, intent);
+                intent.putExtra("from", Type.IMMEDIATE.getCode());
+                finish();
             });
 
 }

@@ -4,11 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import inappupdate.updateimmediate.updateflexible.InAppUpdate;
@@ -52,17 +49,19 @@ public class SplashActivity extends AppCompatActivity {
 
     ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
     new ActivityResultContracts.StartActivityForResult(),
-    new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            // handle callback
-            Intent data = result.getData();
-            if (data != null && data.getBooleanExtra("isImmediate", false)) {
-                /* if isImmediate is true so app close */
-                finish();
-            } else {
-                createTimer();
-            }
-        }
-    });
+            result -> {
+                // handle callback
+                if (result.getResultCode() == RESULT_OK) {
+                    createTimer();
+                } else {
+                    Intent data = result.getData();
+                    /* check below condition for if it's immediate update and user cancel update so can't move user to forward
+                    * and finish activity */
+                    if (data != null && data.getIntExtra("from", -1) == Type.IMMEDIATE.getCode()) {
+                        finish();
+                    } else {
+                        createTimer();
+                    }
+                }
+            });
 }
