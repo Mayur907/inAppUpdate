@@ -84,6 +84,11 @@ ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+
+
+<!-- Change the theme in value-v26 and update this line: "The problem causing crashes is that API 26 doesn't support windowIsTranslucent."-->
+	<item name="android:windowIsTranslucent">false</item>
+
 ```
 
 ## About Me
