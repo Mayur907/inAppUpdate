@@ -4,13 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Objects;
+
 import inappupdate.updateimmediate.updateflexible.InAppUpdate;
 import inappupdate.updateimmediate.updateflexible.Type;
+import inappupdate.updateimmediate.updateflexible.Utils;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends AppCompatActivity {
@@ -24,9 +28,14 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startInAppUpdateActivity() {
-        Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-        inAppActivity.launch(intent);
+        Log.e("inApp", "UPDATE_AVAILABLE : " + Utils.isUpdateAvailable(this));
+        if(Utils.isUpdateAvailable(this)) {
+            Intent intent = new Intent(this, InAppUpdate.class);
+            intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+            inAppActivity.launch(intent);
+        } else {
+            createTimer();
+        }
     }
 
     private void createTimer() {
@@ -59,7 +68,7 @@ public class SplashActivity extends AppCompatActivity {
                     Intent data = result.getData();
                     /* check below condition for if it's immediate update and user cancel update so can't move user to forward
                     * and finish activity */
-                    if (data != null && data.getIntExtra("from", -1) == Type.IMMEDIATE.getCode()) {
+                    if (data != null && Objects.equals(data.getStringExtra("from"), "immediate")) {
                         finish();
                     } else {
                         createTimer();

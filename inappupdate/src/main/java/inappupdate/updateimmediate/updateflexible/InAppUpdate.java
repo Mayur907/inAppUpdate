@@ -24,6 +24,7 @@ import com.google.android.play.core.install.model.UpdateAvailability;
 public class InAppUpdate extends AppCompatActivity {
     private AppUpdateManager appUpdateManager;
     private Type type;
+    private String updateType;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,8 +36,10 @@ public class InAppUpdate extends AppCompatActivity {
         appUpdateManager = AppUpdateManagerFactory.create(this);
 
         if (type == Type.IMMEDIATE) {
+            updateType = "immediate";
             immediateUpdate();
         } else {
+            updateType = "flexible";
             flexibleUpdate();
         }
     }
@@ -54,19 +57,13 @@ public class InAppUpdate extends AppCompatActivity {
                 popupSnackBarForCompleteUpdate();
             } else {
                 Log.e("inApp", "FLEXIBLE else ");
-                Intent intent = new Intent();
-                intent.putExtra("from", Type.FLEXIBLE.getCode());
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
+                backToSplash(Activity.RESULT_CANCELED);
             }
         });
 
         appUpdateInfoTask.addOnFailureListener(e -> {
             Log.e("inApp", "FLEXIBLE error Exception :: " + e.getMessage());
-            Intent intent = new Intent();
-            intent.putExtra("from", Type.FLEXIBLE.getCode());
-            setResult(Activity.RESULT_CANCELED, intent);
-            finish();
+            backToSplash(Activity.RESULT_CANCELED);
         });
     }
 
@@ -88,10 +85,7 @@ public class InAppUpdate extends AppCompatActivity {
                 } else {
                     Log.e("inApp", "FLEXIBLE Update canceled by user! Result Code: " + resultCode);
                 }
-                Intent intent = new Intent();
-                setResult(resultCode, intent);
-                intent.putExtra("from", Type.FLEXIBLE.getCode());
-                finish();
+                backToSplash(resultCode);
             });
 
     private void popupSnackBarForCompleteUpdate() {
@@ -107,11 +101,8 @@ public class InAppUpdate extends AppCompatActivity {
         });
         builder.setNegativeButton("Later", (dialogInterface, i) -> {
             Log.e("inApp", "FLEXIBLE negative button pressed ");
-            Intent intent = new Intent();
-            intent.putExtra("from", Type.FLEXIBLE.getCode());
-            setResult(Activity.RESULT_CANCELED, intent);
-            finish();
             dialogInterface.dismiss();
+            backToSplash(Activity.RESULT_CANCELED);
         });
 
         AlertDialog dialog = builder.create();
@@ -128,19 +119,13 @@ public class InAppUpdate extends AppCompatActivity {
                 startUpdateFlowImmediate(appUpdateInfo);
             } else {
                 Log.e("inApp", "IMMEDIATE else ");
-                Intent intent = new Intent();
-                intent.putExtra("from", Type.IMMEDIATE.getCode());
-                setResult(Activity.RESULT_CANCELED, intent);
-                finish();
+                backToSplash(Activity.RESULT_CANCELED);
             }
         });
 
         appUpdateInfoTask.addOnFailureListener(e -> {
             Log.e("inApp", "IMMEDIATE error Exception :: " + e.getMessage());
-            Intent intent = new Intent();
-            intent.putExtra("from", Type.IMMEDIATE.getCode());
-            setResult(Activity.RESULT_CANCELED, intent);
-            finish();
+            backToSplash(Activity.RESULT_CANCELED);
         });
     }
 
@@ -161,10 +146,13 @@ public class InAppUpdate extends AppCompatActivity {
                 } else {
                     Log.e("inApp", "IMMEDIATE Update canceled by user! Result Code: " + resultCode);
                 }
-                Intent intent = new Intent();
-                setResult(resultCode, intent);
-                intent.putExtra("from", Type.IMMEDIATE.getCode());
-                finish();
+                backToSplash(resultCode);
             });
 
+    private void backToSplash(int resultCode){
+        Intent intent = new Intent();
+        intent.putExtra("from", updateType);
+        setResult(resultCode, intent);
+        finish();
+    }
 }
