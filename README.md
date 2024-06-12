@@ -23,7 +23,7 @@ Then, add the library to your module `build.gradle`
 Add the dependency
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.11'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.12'
 	}
 ```
 
