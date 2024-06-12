@@ -13,10 +13,9 @@ public class Utils {
     public static boolean isUpdateAvailable(Context context){
         AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(context);
         appUpdateManager.getAppUpdateInfo().addOnSuccessListener(appUpdateInfo -> {
-            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
                 result = true;
-            } else result = appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED;
+            }
         });
         return result;
     }
