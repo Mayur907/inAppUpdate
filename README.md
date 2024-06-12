@@ -23,7 +23,7 @@ Then, add the library to your module `build.gradle`
 Add the dependency
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.10'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.11'
 	}
 ```
 
@@ -33,9 +33,13 @@ dependencies {
         startInAppUpdateActivity();
 	
 private void startInAppUpdateActivity() {
-        Intent intent = new Intent(this, InAppUpdate.class);
-        intent.putExtra("key", Type.IMMEDIATE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-	inAppActivity.launch(intent)
+        if(Utils.isUpdateAvailable(this)) {
+            Intent intent = new Intent(this, InAppUpdate.class);
+            intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+            inAppActivity.launch(intent);
+        } else {
+            createTimer();
+        }
     }
 
 get a result like this
@@ -47,9 +51,9 @@ ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
                     createTimer();
                 } else {
                     Intent data = result.getData();
-                    /* check the below condition for if it's an immediate update and the user cancels the update so can't move the user to the next screen
+                    /* check below condition for if it's immediate update and user cancel update so can't move user to forward
                     * and finish activity */
-                    if (data != null && data.getIntExtra("from", -1) == Type.IMMEDIATE.getCode()) {
+                    if (data != null && Objects.equals(data.getStringExtra("from"), "immediate")) {
                         finish();
                     } else {
                         createTimer();
@@ -86,7 +90,7 @@ ActivityResultLauncher<Intent> inAppActivity = registerForActivityResult(
     </style>
 
 
-<!-- Change the theme in value-v26 and update this line: "The problem causing crashes is that API 26 doesn't support windowIsTranslucent."-->
+<!-- If your app minimum API version is below 26 so add theme in value-v26 and update this line: "The problem causing crashes is that API 26 doesn't support windowIsTranslucent."-->
 	<item name="android:windowIsTranslucent">false</item>
 
 ```
