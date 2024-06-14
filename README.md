@@ -23,7 +23,7 @@ Then, add the library to your module `build.gradle`
 Add the dependency
 ```
 dependencies {
-	       implementation 'com.github.Mayur907:inAppUpdate:1.1.12'
+	       implementation 'com.github.Mayur907:inAppUpdate:1.1.13'
 	}
 ```
 
@@ -33,13 +33,18 @@ dependencies {
         startInAppUpdateActivity();
 	
 private void startInAppUpdateActivity() {
-        if(Utils.isUpdateAvailable(this)) {
-            Intent intent = new Intent(this, InAppUpdate.class);
-            intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-            inAppActivity.launch(intent);
-        } else {
-            createTimer();
-        }
+        Utils.updateAvailable(this, new Utils.UpdateStatusCallback() {
+            @Override
+            public void onUpdateStatusReceived(boolean status) {
+                if(status){
+                    Intent intent = new Intent(SplashActivity.this, InAppUpdate.class);
+                    intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+                    inAppActivity.launch(intent);
+                } else {
+                    createTimer();
+                }
+            }
+        });
     }
 
 get a result like this
