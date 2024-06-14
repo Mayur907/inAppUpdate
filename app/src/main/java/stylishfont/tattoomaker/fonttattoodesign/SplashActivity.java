@@ -28,14 +28,18 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void startInAppUpdateActivity() {
-        Log.e("inApp", "UPDATE_AVAILABLE : " + Utils.isUpdateAvailable(this));
-        if(Utils.isUpdateAvailable(this)) {
-            Intent intent = new Intent(this, InAppUpdate.class);
-            intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
-            inAppActivity.launch(intent);
-        } else {
-            createTimer();
-        }
+        Utils.updateAvailable(this, new Utils.UpdateStatusCallback() {
+            @Override
+            public void onUpdateStatusReceived(boolean status) {
+                if(status){
+                    Intent intent = new Intent(SplashActivity.this, InAppUpdate.class);
+                    intent.putExtra("key", Type.FLEXIBLE); /* Type.IMMEDIATE, Type.FLEXIBLE */
+                    inAppActivity.launch(intent);
+                } else {
+                    createTimer();
+                }
+            }
+        });
     }
 
     private void createTimer() {
